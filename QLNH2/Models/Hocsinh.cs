@@ -18,4 +18,6 @@ public partial class Hocsinh
     public int? Classid { get; set; }
 
     public virtual Class? Class { get; set; }
+
+    public virtual ICollection<PointStudent> PointStudents { get; set; } = new List<PointStudent>();
 }

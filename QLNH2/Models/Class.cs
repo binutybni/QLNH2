@@ -9,8 +9,6 @@ public partial class Class
 
     public string? NameClass { get; set; }
 
-    public string? NameSubject { get; set; }
-
     public int? Schoolid { get; set; }
 
     public int? TimeCreate { get; set; }

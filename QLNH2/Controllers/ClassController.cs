@@ -32,8 +32,7 @@ namespace QLNH2.Controllers
             if (!string.IsNullOrEmpty(search.SearchTerm))
             {
                 query = query.Where(x =>
-                x.NameClass.ToLower().Trim().Contains(search.SearchTerm) ||
-                x.NameSubject.ToLower().Trim().Contains(search.SearchTerm));
+                x.NameClass.ToLower().Trim().Contains(search.SearchTerm) );
             }
 
             var lop = await query
@@ -41,8 +40,7 @@ namespace QLNH2.Controllers
                 .Take(search.PageSize)
                 .Select(x => new
                 {
-                    x.NameClass,
-                    x.NameSubject,
+                    x.NameClass
                 }).ToListAsync();
 
             var totalRecord = lop.Count();
@@ -78,7 +76,6 @@ namespace QLNH2.Controllers
             var newclass = new Class
             {
                 NameClass = lop.NameClass,
-                NameSubject = lop.NameSubject,
                 Schoolid = lop.Schoolid,
                 TimeCreate = unixTimestamp,
                 TimeUpdate = unixTimestamp,
@@ -110,7 +107,6 @@ namespace QLNH2.Controllers
             }
 
             check_idclass.NameClass = lop.NameClass;
-            check_idclass.NameSubject = lop.NameSubject;
             check_idclass.Schoolid = lop.Schoolid;
             check_idclass.TimeUpdate = unixTimestamp;
             await db.SaveChangesAsync();

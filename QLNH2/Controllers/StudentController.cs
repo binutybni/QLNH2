@@ -7,6 +7,7 @@ using Microsoft.VisualBasic;
 using QLNH2.Data;
 using QLNH2.Models;
 using QLNH2.Models.DTOs.Student;
+using System.Drawing;
 
 namespace QLNH2.Controllers
 {
@@ -38,7 +39,7 @@ namespace QLNH2.Controllers
                     .Where(x => x.NameStudent.ToLower().Trim().Contains(search.SearchTerm) ||
                                 x.CodeStudent.ToLower().Trim().Contains(search.SearchTerm));
             }
-            if (query.Count() == 0)
+            if (!query.Any())
             {
                 return Ok(new { msg = "không tìm thấy ", success = false });
             }
@@ -258,7 +259,6 @@ namespace QLNH2.Controllers
                 {
                     x.Id,
                     x.NameClass,
-                    x.NameSubject
                 })
                 .ToListAsync();
 
@@ -312,7 +312,6 @@ namespace QLNH2.Controllers
                 {
                     x.Id,
                     x.NameClass,
-                    x.NameSubject
                 })
                 .ToListAsync();
 
@@ -375,7 +374,6 @@ namespace QLNH2.Controllers
                 {
                     x.Id,
                     x.NameClass,
-                    x.NameSubject
                 })
                 .ToListAsync();
 
@@ -426,11 +424,91 @@ namespace QLNH2.Controllers
             return Ok(new { data = newlist });
         }
 
-        [HttpPost] // 3 tiếng
-        [Route("bt-1-buoi-2")]
+
+        // test
+
+        //[HttpPost]
+        //[Route("bt1-buoi2")] 
+        //public async Task<IActionResult> GetAllStudentAndClassAndSchool(int idtrg, [FromBody] PaginationClass search)
+        //{
+        //    var query = db.Hocsinhs.Include(x => x.Class).AsQueryable(); // xài AsQueryable thì cần gõ trực tiếp giống như gõ code trên sql, và xài nhiều lần , và khái niệm(Inumberal, IQuerytable)
+        //    if (!string.IsNullOrEmpty(search.SearchTerm))
+        //    {
+        //        query = query.Where(x =>
+        //        x.NameStudent.ToLower().Trim().Contains(search.SearchTerm) ||
+        //        x.CodeStudent.ToLower().Trim().Contains(search.SearchTerm) ||
+        //        x.Class.NameClass.ToLower().Trim().Contains(search.SearchTerm));
+        //    }
+
+        //    if (query.Count() == 0)
+        //    {
+        //        return Ok(new { msg = "không tìm thấy dữ liệu bạn đang tìm", success = false });
+        //    }
+
+        //    var school = await db.Schools
+        //        .Where(x => x.Id == idtrg)
+        //        .Select(x => new
+        //        {
+        //            x.NameSchool
+        //        })
+        //        .FirstOrDefaultAsync();
+        //    if (school == null)
+        //    {
+        //        return Ok(new { msg = "không có id trường đó", success = false });
+        //    }
+
+        //    var list = new List<object>();
+
+        //    var lop = await db.Classes
+        //        .Where(x => x.Schoolid == idtrg)
+        //        .Select(x => new
+        //        {
+        //            x.Id,
+        //            x.NameClass,
+        //        })
+        //        .ToListAsync();
+
+        //    var list2 = new List<object>();
+
+        //    var student = query
+        //    .Skip((search.Page - 1) * search.PageSize)
+        //    .Take(search.PageSize)
+        //    .Where(x => x.Classid =??)
+        //    .AsEnumerable()     // coi cái này là ranh giới, bình thường thì EF vẫn xứ lý trên IsQueryTable vì nó tự hiểu, nên sau khi dùng AsEnumerable thì nó chỉ xữ lý trên C# nên chỉ có thể dùng dữ liệu đã cung cấp thôi. Ví dụ lúc đầu db.Hocsinh thì về sau chỉ có thể lấy dữ liệu từ bảng học sinh nếu muôn lấy thêm dữ liệu của bảng khác thì phải Include(x => x.(bảng) trước đó) 
+        //    .Select((x, Index) => new
+        //    {
+        //        STT = (search.Page - 1) * search.PageSize + Index + 1,
+        //        x.NameStudent,
+        //        x.CodeStudent,
+        //    }).ToList();
+
+        //    list.Add(new
+        //    {
+        //        school.NameSchool,
+        //        lop
+        //    });
+
+        //    list2.Add(new
+        //    {
+        //        list,
+        //        student
+        //    });
+
+        //    var totalcount = query.Count();
+        //    return Ok(new
+        //    {
+        //        data = list2,
+        //        currentPage = search.Page,
+        //        totalcount = totalcount,
+        //        totalPage = (int)Math.Ceiling((double)totalcount / search.PageSize)
+        //    });
+        //}
+
+        [HttpPost]
+        [Route("bt1-buoi2")]
         public async Task<IActionResult> GetAllStudentAndClassAndSchool(int idtrg, [FromBody] PaginationClass search)
         {
-            var query = db.Hocsinhs.Include(x => x.Class).AsQueryable(); // xài AsQueryable thì cần gõ trực tiếp giống như gõ code trên sql, và xài nhiều lần , và khái niệm(Inumberal, IQuerytable)
+            var query = db.Hocsinhs.Include(x => x.Class).AsQueryable();
             if (!string.IsNullOrEmpty(search.SearchTerm))
             {
                 query = query.Where(x =>
@@ -439,66 +517,420 @@ namespace QLNH2.Controllers
                 x.Class.NameClass.ToLower().Trim().Contains(search.SearchTerm));
             }
 
-            if (!query.Any())
-            {
-                return Ok(new { msg = "không tìm thấy dữ liệu bạn đang tìm", success = false });
-            }
-
             var school = await db.Schools
                 .Where(x => x.Id == idtrg)
                 .Select(x => new
                 {
+                    x.Id,
                     x.NameSchool
-                })
-                .FirstOrDefaultAsync();
-            if (school == null)
-            {
-                return Ok(new { msg = "không có id trường đó", success = false });
-            }
+                }).ToListAsync();
 
             var list = new List<object>();
-            
-            var lop = await db.Classes
-                .Where(x => x.Schoolid == idtrg)
-                .Select(x => x.NameClass)
-                .FirstOrDefaultAsync();
-
-            var list2 = new List<object>();
-
-            var student = query
-            .Skip((search.Page - 1) * search.PageSize)
-            .Take(search.PageSize)
-            .AsEnumerable()     // coi cái này là ranh giới, bình thường thì EF vẫn xứ lý trên IsQueryTable vì nó tự hiểu, nên sau khi dùng AsEnumerable thì nó chỉ xữ lý trên C# nên chỉ có thể dùng dữ liệu đã cung cấp thôi. Ví dụ lúc đầu db.Hocsinh thì về sau chỉ có thể lấy dữ liệu từ bảng học sinh nếu muôn lấy thêm dữ liệu của bảng khác thì phải Include(x => x.(bảng) trước đó) 
-            .Select((x, Index) => new
+            foreach (var item in school)
             {
-                STT = (search.Page - 1) * search.PageSize + Index + 1,
-                x.NameStudent,
-                x.CodeStudent,
-            }).ToList();
+                var lop = db.Classes
+                    .Skip((search.Page - 1) * search.PageSize)
+                    .Take(search.PageSize)
+                    .Where(x => x.Schoolid == item.Id)
+                    .AsEnumerable()
+                    .Select((x, index) => new
+                    {
+                        STT = (search.Page - 1) * search.PageSize + index + 1,
+                        x.Id,
+                        x.NameClass
+                    }).ToList();
 
-            list.Add(new
-            {
-                school.NameSchool,
-                lop
-            });
+                var list2 = new List<object>();
+                foreach (var item2 in lop)
+                {
+                    var sv = await query
+                        .Where(x => x.Classid == item2.Id)
+                        .Select(x => new
+                        {
+                            x.NameStudent,
+                            x.CodeStudent
+                        }).ToListAsync();
+                    list2.Add(new
+                    {
+                        item2.NameClass,
+                        sv
+                    });
+                }
+                list.Add(new
+                {
+                    item.NameSchool,
+                    list2
+                });
 
-            list2.Add(new
-            {
-                list,
-                student
-            });
-
-            var totalcount = query.Count(); 
+            }
+            var totalcount = await query.CountAsync();
             return Ok(new
             {
-                data = list2,
+                data = list,
+                curremtPage = search.Page,
+                totalcount = totalcount,
+                totalPage = (int)Math.Ceiling((double)totalcount / search.PageSize)
+
+            });
+        }
+
+        [HttpPost]
+        [Route("bt2-buoi2")]
+        public async Task<IActionResult> GetAllStudentBySubjectAndPointAndEvaluateByClass(int idlop, [FromBody] PaginationClass search)
+        {
+            var query = db.Hocsinhs.AsQueryable();
+            if (!string.IsNullOrEmpty(search.SearchTerm))
+            {
+                query = query.Where(x =>
+                x.NameStudent.ToLower().Trim().Contains(search.SearchTerm) ||
+                x.CodeStudent.ToLower().Trim().Contains(search.SearchTerm));
+            }
+
+            if (!query.Any())
+            {
+                return Ok(new { msg = "không tìm thấy", success = false });
+            }
+
+            var lop = await db.Classes
+                .Where(x => x.Id == idlop)
+                .Select(x => new
+                {
+                    x.NameClass
+                }).FirstOrDefaultAsync();
+
+            var list = new List<object>();
+            var hs = await query
+                .Skip((search.Page - 1) * search.PageSize)
+                .Take(search.PageSize)
+                .Where(x => x.Classid == idlop)
+                .Select(x => new
+                {
+                    x.Id,
+                    x.CodeStudent,
+                    x.NameStudent
+                }).ToListAsync();
+            var list5 = new List<object>();
+            foreach (var item in hs)
+            {
+                var list2 = new List<object>();
+                var pointsb = await db.PointStudents
+                    .Where(x => x.IdSv == item.Id)
+                    .Select(x => new
+                    {
+                        x.Point,
+                        x.Evaluate,
+                        x.IdMh,
+                        x.IdQt
+                    }).ToListAsync();
+
+                list2.Add(new
+                {
+                    item.NameStudent,
+                    item.CodeStudent,
+                    pointsb
+                });
+
+                var list3 = new List<object>();
+                foreach (var item2 in pointsb)
+                {
+                    var sb = await db.Subjects
+                        .Where(x => x.Id == item2.IdMh)
+                        .Select(x => new
+                        {
+                            x.NameSub
+                        }).ToListAsync();
+
+                    list3.Add(new
+                    {
+                        sb
+                    });
+                    foreach (var item3 in pointsb)
+                    {
+                        var list4 = new List<object>();
+                        var qt = await db.Progresses
+                            .Where(x => x.Id == item3.IdQt)
+                            .Select(x => new
+                            {
+                                x.NameProgress
+
+                            }).ToArrayAsync();
+                        list4.Add(new
+                        {
+                            list2,
+                            list3,
+                            qt
+                        });
+                        list.Add(new
+                        {
+                            lop,
+                            list4
+                        });
+                    }
+                }
+            }
+
+            var totalcount = query.Count();
+            return Ok(new
+            {
+                data = list,
+                currentPage = search.Page,
+                totalcount = totalcount,
+                totalPage = (int)Math.Ceiling((double)totalcount / search.PageSize)
+
+            });
+        }
+
+        [HttpPost]
+        [Route("bt3-buoi2")]
+        public async Task<IActionResult> GetAllSubjectAndStudentFailOrPass(int idsb, [FromBody] PaginationClass search)
+        {
+            var query = db.Subjects.AsQueryable();
+            if (!string.IsNullOrEmpty(search.SearchTerm))
+            {
+                query = query.Where(x =>
+                x.NameSub.ToLower().Trim().Contains(search.SearchTerm) ||
+                x.MaMh.ToLower().Trim().Contains(search.SearchTerm)
+                );
+            }
+            if (query.Count() == 0)
+            {
+                return Ok(new { msg = "không tìm thấy dữ liệu", success = false });
+            }
+            var sb = await query
+                .Where(x => x.Id == idsb)
+                .Select(x => new
+                {
+                    x.Id,
+                    x.MaMh,
+                    x.NameSub
+                }).ToListAsync();
+            var list = new List<object>();
+            foreach (var item in sb)
+            {
+                var point = await db.PointStudents
+                    .Skip((search.Page - 1) * search.PageSize)
+                    .Take(search.PageSize)
+                    .Where(x => x.IdMh == item.Id)
+                    .Select(x => new
+                    {
+                        x.IdSv,
+                        x.Point,
+                        Evaluate = x.Evaluate == "F" ? "Rớt" : "Đậu"
+
+                    }).ToListAsync();
+                var rot = point.Count(x => x.Evaluate == "Rớt");
+                var dau = point.Count(x => x.Evaluate == "Đậu");
+                var list2 = new List<object>();
+                foreach (var item2 in point)
+                {
+                    var sv = await db.Hocsinhs
+                        .Where(x => x.Id == item2.IdSv)
+                        .Select(x => new
+                        {
+                            x.NameStudent,
+                            x.CodeStudent
+                        }).ToListAsync();
+                    list2.Add(new
+                    {
+                        sv,
+                        point,
+
+                    });
+                }
+                list.Add(new
+                {
+                    sb,
+                    list2,
+                    rot,
+                    dau
+
+                });
+            }
+            var totalcount = query.Count();
+            return Ok(new
+            {
+                data = list,
                 currentPage = search.Page,
                 totalcount = totalcount,
                 totalPage = (int)Math.Ceiling((double)totalcount / search.PageSize)
             });
-
-
-
         }
+
+        [HttpPost]
+        [Route("bt4-buoi2")]
+        public async Task<IActionResult> GetAllSubjectAndStudentInCLass(int idsb, [FromBody] PaginationClass search)
+        {
+            var query = db.Subjects.AsQueryable();
+            if (!string.IsNullOrEmpty(search.SearchTerm))
+            {
+                query = query.Where(x =>
+                x.NameSub.ToLower().Trim().Contains(search.SearchTerm) ||
+                x.MaMh.ToLower().Trim().Contains(search.SearchTerm)
+                );
+            }
+            if (query.Count() == 0)
+            {
+                return Ok(new { msg = "không tìm thấy dữ liệu", success = false });
+            }
+            var sb = await query
+                .Where(x => x.Id == idsb)
+                .Select(x => new
+                {
+                    x.Id,
+                    x.MaMh,
+                    x.NameSub
+                }).ToListAsync();
+            var list = new List<object>();
+            foreach (var item in sb)
+            {
+                var point = await db.PointStudents
+                    .Skip((search.Page - 1) * search.PageSize)
+                    .Take(search.PageSize)
+                    .Where(x => x.IdMh == item.Id)
+                    .Select(x => new
+                    {
+                        x.IdSv,
+                        x.Point,
+                        x.Evaluate
+
+                    }).ToListAsync();
+                var list2 = new List<object>();
+                foreach (var item2 in point)
+                {
+                    var sv = await db.Hocsinhs
+                        .Where(x => x.Id == item2.IdSv)
+                        .Select(x => new
+                        {
+                            x.NameStudent,
+                            x.CodeStudent,
+                            x.Classid
+                        }).ToListAsync();
+                    var list3 = new List<object>();
+                    foreach (var item3 in sv)
+                    {
+                        var lop = await db.Classes
+                            .Where(x => x.Id == item3.Classid)
+                            .Select(x => new
+                            {
+                                x.NameClass
+                            }).ToListAsync();
+                        list3.Add(new
+                        {
+                            Student = sv,
+                            Lop = lop
+                        });
+                    }
+                    list2.Add(new
+                    {
+                        list3,
+                        PointAndEvaluate = point
+
+                    });
+                }
+                list.Add(new
+                {
+                    SubJect = sb,
+                    list2,
+                });
+            }
+            var totalcount = query.Count();
+            return Ok(new
+            {
+                data = list,
+                currentPage = search.Page,
+                totalcount = totalcount,
+                totalPage = (int)Math.Ceiling((double)totalcount / search.PageSize)
+            });
+        }
+
+        [HttpPost]
+        [Route("bt5-buoi2")]
+        public async Task<IActionResult> GetAllSubjectInCLassAndStudentInThatClass(int idsb, [FromBody] PaginationClass search)
+        {
+            var query = db.Subjects.AsQueryable();
+            if (!string.IsNullOrEmpty(search.SearchTerm))
+            {
+                query = query.Where(x =>
+                x.NameSub.ToLower().Trim().Contains(search.SearchTerm) ||
+                x.MaMh.ToLower().Trim().Contains(search.SearchTerm)
+                );
+            }
+            if (query.Count() == 0)
+            {
+                return Ok(new { msg = "không tìm thấy dữ liệu", success = false });
+            }
+            var sb = await query
+                .Where(x => x.Id == idsb)
+                .Select(x => new
+                {
+                    x.Id,
+                    x.MaMh,
+                    x.NameSub
+                }).ToListAsync();
+            var list = new List<object>();
+            foreach (var item in sb)
+            {
+                var point = await db.PointStudents
+                    .Skip((search.Page - 1) * search.PageSize)
+                    .Take(search.PageSize)
+                    .Where(x => x.IdMh == item.Id)
+                    .Select(x => new
+                    {
+                        x.IdSv,
+                        x.Point,
+                        x.Evaluate
+
+                    }).ToListAsync();
+                var list2 = new List<object>();
+                foreach (var item2 in point)
+                {
+                    var sv = await db.Hocsinhs
+                        .Where(x => x.Id == item2.IdSv)
+                        .Select(x => new
+                        {
+                            x.NameStudent,
+                            x.CodeStudent,
+                            x.Classid
+                        }).ToListAsync();
+                    foreach (var item3 in sv)
+                    {
+                        var lop = await db.Classes
+                            .Where(x => x.Id == item3.Classid)
+                            .Select(x => new
+                            {
+                                x.NameClass
+                            }).ToListAsync();
+                        list2.Add(new
+                        {
+                            Lop = lop,
+                            Student = sv
+                        });
+                    }
+                }
+                list.Add(new
+                {
+                    SubJect = sb,
+                    list2,
+                });
+            }
+            var totalcount = query.Count();
+            return Ok(new
+            {
+                data = list,
+                currentPage = search.Page,
+                totalcount = totalcount,
+                totalPage = (int)Math.Ceiling((double)totalcount / search.PageSize)
+            });
+        }
+
+
+
+
+        // bên table Subject làm sao để xóa 1 môn học mà vẫn còn sinh viên đang học môn đó
+        // AsQueryTable() là gì, nó thường dùng để làm gì
+        // bài 1,2,3,4,5 làm sao để không dùng vòng lặp 
+        // bài 3 với bài 4 hình như đang sai, cái point nó xuất hiện nhiều lần, chứ không phải 1 sinh viên thì 1 point rồi 1 sinh viên khác thì 1 point khác, làm sao để sữa
+        // bài 5 hình như đang sai, api trả về là 1 môn học rồi lớp rồi sinh viên, rồi tiếp lớp đó rồi sinh viên khác, chứ không phải là 1 môn rồi 1 lớp rồi tất cả sinh viên của lớp đó, làm sao để sữa
+
     }
 }

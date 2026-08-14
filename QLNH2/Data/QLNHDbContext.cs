@@ -16,7 +16,13 @@ public partial class QLNHDbContext : DbContext
 
     public virtual DbSet<Hocsinh> Hocsinhs { get; set; }
 
+    public virtual DbSet<PointStudent> PointStudents { get; set; }
+
+    public virtual DbSet<Progress> Progresses { get; set; }
+
     public virtual DbSet<School> Schools { get; set; }
+
+    public virtual DbSet<Subject> Subjects { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -28,9 +34,6 @@ public partial class QLNHDbContext : DbContext
             entity.Property(e => e.NameClass)
                 .HasMaxLength(100)
                 .HasColumnName("name_class");
-            entity.Property(e => e.NameSubject)
-                .HasMaxLength(100)
-                .HasColumnName("name_subject");
             entity.Property(e => e.Schoolid).HasColumnName("schoolid");
             entity.Property(e => e.TimeCreate).HasColumnName("time_create");
             entity.Property(e => e.TimeUpdate).HasColumnName("time_update");
@@ -60,6 +63,41 @@ public partial class QLNHDbContext : DbContext
                 .HasConstraintName("FK_Hocsinh_Class");
         });
 
+        modelBuilder.Entity<PointStudent>(entity =>
+        {
+            entity.ToTable("Point_Student");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Evaluate).HasMaxLength(50);
+            entity.Property(e => e.IdMh).HasColumnName("idMH");
+            entity.Property(e => e.IdQt).HasColumnName("idQT");
+            entity.Property(e => e.IdSv).HasColumnName("idSV");
+
+            entity.HasOne(d => d.IdMhNavigation).WithMany(p => p.PointStudents)
+                .HasForeignKey(d => d.IdMh)
+                .HasConstraintName("FK_Point_Student_Subject");
+
+            entity.HasOne(d => d.IdQtNavigation).WithMany(p => p.PointStudents)
+                .HasForeignKey(d => d.IdQt)
+                .HasConstraintName("FK_Point_Student_Progress");
+
+            entity.HasOne(d => d.IdSvNavigation).WithMany(p => p.PointStudents)
+                .HasForeignKey(d => d.IdSv)
+                .HasConstraintName("FK_Point_Student_Hocsinh");
+        });
+
+        modelBuilder.Entity<Progress>(entity =>
+        {
+            entity.ToTable("Progress");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.NameProgress)
+                .HasMaxLength(100)
+                .HasColumnName("Name_progress");
+            entity.Property(e => e.TimeCre).HasColumnName("time_cre");
+            entity.Property(e => e.TimeUp).HasColumnName("time_up");
+        });
+
         modelBuilder.Entity<School>(entity =>
         {
             entity.ToTable("School");
@@ -74,6 +112,21 @@ public partial class QLNHDbContext : DbContext
                 .HasColumnName("phone");
             entity.Property(e => e.TimeCreate).HasColumnName("time_create");
             entity.Property(e => e.TimeUpdate).HasColumnName("time_update");
+        });
+
+        modelBuilder.Entity<Subject>(entity =>
+        {
+            entity.ToTable("Subject");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.MaMh)
+                .HasMaxLength(20)
+                .HasColumnName("MaMH");
+            entity.Property(e => e.NameSub)
+                .HasMaxLength(200)
+                .HasColumnName("Name_sub");
+            entity.Property(e => e.TimeCre).HasColumnName("time_cre");
+            entity.Property(e => e.TimeUp).HasColumnName("time_up");
         });
 
         OnModelCreatingPartial(modelBuilder);
