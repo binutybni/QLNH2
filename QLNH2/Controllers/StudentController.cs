@@ -924,8 +924,6 @@ namespace QLNH2.Controllers
         }
 
 
-
-
         // bên table Subject làm sao để xóa 1 môn học mà vẫn còn sinh viên đang học môn đó
         // AsQueryTable() là gì, nó thường dùng để làm gì
         // bài 1,2,3,4,5 làm sao để không dùng vòng lặp 
