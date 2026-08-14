@@ -142,7 +142,6 @@ namespace QLNH2.Controllers
                 {
                     x.Id,
                     x.NameClass,
-                    x.NameSubject
                 })
                 .ToListAsync();
             return Ok(new { data = lop, success = true });
@@ -182,7 +181,6 @@ namespace QLNH2.Controllers
                 {
                     x.Id,
                     x.NameClass,
-                    x.NameSubject
                 })
                 .ToListAsync();
             var newList = new List<object>();
@@ -428,11 +426,11 @@ namespace QLNH2.Controllers
             return Ok(new { data = newlist });
         }
 
-        [HttpPost]
+        [HttpPost] // 3 tiếng
         [Route("bt-1-buoi-2")]
         public async Task<IActionResult> GetAllStudentAndClassAndSchool(int idtrg, [FromBody] PaginationClass search)
         {
-            var query = db.Hocsinhs.Include(x => x.Class).AsQueryable();
+            var query = db.Hocsinhs.Include(x => x.Class).AsQueryable(); // xài AsQueryable thì cần gõ trực tiếp giống như gõ code trên sql, và xài nhiều lần , và khái niệm(Inumberal, IQuerytable)
             if (!string.IsNullOrEmpty(search.SearchTerm))
             {
                 query = query.Where(x =>
@@ -455,19 +453,19 @@ namespace QLNH2.Controllers
                 .FirstOrDefaultAsync();
             if (school == null)
             {
-                return Ok(new { msg = "không id trường đó", success = false });
+                return Ok(new { msg = "không có id trường đó", success = false });
             }
 
             var list = new List<object>();
-
-            var getlopbytrg = await db.Classes
+            
+            var lop = await db.Classes
                 .Where(x => x.Schoolid == idtrg)
                 .Select(x => x.NameClass)
                 .FirstOrDefaultAsync();
 
             var list2 = new List<object>();
 
-            var hs2 = query
+            var student = query
             .Skip((search.Page - 1) * search.PageSize)
             .Take(search.PageSize)
             .AsEnumerable()     // coi cái này là ranh giới, bình thường thì EF vẫn xứ lý trên IsQueryTable vì nó tự hiểu, nên sau khi dùng AsEnumerable thì nó chỉ xữ lý trên C# nên chỉ có thể dùng dữ liệu đã cung cấp thôi. Ví dụ lúc đầu db.Hocsinh thì về sau chỉ có thể lấy dữ liệu từ bảng học sinh nếu muôn lấy thêm dữ liệu của bảng khác thì phải Include(x => x.(bảng) trước đó) 
@@ -481,16 +479,16 @@ namespace QLNH2.Controllers
             list.Add(new
             {
                 school.NameSchool,
-                getlopbytrg
+                lop
             });
 
             list2.Add(new
             {
                 list,
-                hs2
+                student
             });
 
-            var totalcount = await query.CountAsync(); 
+            var totalcount = query.Count(); 
             return Ok(new
             {
                 data = list2,
