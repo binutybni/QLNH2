@@ -121,7 +121,7 @@ namespace QLNH2.Controllers
                 }).ToListAsync();
 
             var newlist = new List<object>();
-            foreach(var item in nh)
+            foreach (var item in nh)
             {
                 var gv = await db.Pcgvgds
                     .Where(x => x.IdNh == item.Id && x.IdGvgdNavigation.Id == x.IdGvgd)
@@ -154,18 +154,18 @@ namespace QLNH2.Controllers
                 }).ToListAsync();
 
             var newlist = new List<object>();
-            
-            foreach(var item in nh)
+
+            foreach (var item in nh)
             {
                 var sb = await db.Pcgvgds
                     .Where(x => x.IdNhNavigation.Id == item.Id)
                     .Select(x => new
                     {
                         x.Id,
-                        sub =x.IdMhNavigation.NameSub,
+                        sub = x.IdMhNavigation.NameSub,
                     }).ToListAsync();
 
-                foreach(var item2 in sb)
+                foreach (var item2 in sb)
                 {
                     var hs = await db.Dkmhs
                         .Where(x => x.IdGvgdmh == item2.Id)
@@ -179,8 +179,6 @@ namespace QLNH2.Controllers
                         item.TenNh,
                         item2.sub,
                         total = hs.Count()
-
-
                     });
                 }
             }
