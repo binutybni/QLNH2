@@ -17,5 +17,7 @@ public partial class Class
 
     public virtual ICollection<Hocsinh> Hocsinhs { get; set; } = new List<Hocsinh>();
 
+    public virtual ICollection<Pcgvgd> Pcgvgds { get; set; } = new List<Pcgvgd>();
+
     public virtual School? School { get; set; }
 }

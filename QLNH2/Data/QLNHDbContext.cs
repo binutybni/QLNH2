@@ -14,7 +14,15 @@ public partial class QLNHDbContext : DbContext
 
     public virtual DbSet<Class> Classes { get; set; }
 
+    public virtual DbSet<Dkmh> Dkmhs { get; set; }
+
+    public virtual DbSet<Gvgd> Gvgds { get; set; }
+
     public virtual DbSet<Hocsinh> Hocsinhs { get; set; }
+
+    public virtual DbSet<Nh> Nhs { get; set; }
+
+    public virtual DbSet<Pcgvgd> Pcgvgds { get; set; }
 
     public virtual DbSet<PointStudent> PointStudents { get; set; }
 
@@ -43,6 +51,39 @@ public partial class QLNHDbContext : DbContext
                 .HasConstraintName("FK_Class_School");
         });
 
+        modelBuilder.Entity<Dkmh>(entity =>
+        {
+            entity.ToTable("DKMH");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.IdGvgdmh).HasColumnName("idGVGDMH");
+            entity.Property(e => e.IdHs).HasColumnName("idHS");
+            entity.Property(e => e.TimeRegister).HasColumnName("time_register");
+
+            entity.HasOne(d => d.IdGvgdmhNavigation).WithMany(p => p.Dkmhs)
+                .HasForeignKey(d => d.IdGvgdmh)
+                .HasConstraintName("FK_DKMH_PCGVGD");
+
+            entity.HasOne(d => d.IdHsNavigation).WithMany(p => p.Dkmhs)
+                .HasForeignKey(d => d.IdHs)
+                .HasConstraintName("FK_DKMH_Hocsinh");
+        });
+
+        modelBuilder.Entity<Gvgd>(entity =>
+        {
+            entity.ToTable("GVGD");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.MaGvgd)
+                .HasMaxLength(50)
+                .HasColumnName("MaGVGD");
+            entity.Property(e => e.TenGvgd)
+                .HasMaxLength(200)
+                .HasColumnName("TenGVGD");
+            entity.Property(e => e.TimeCre).HasColumnName("time_cre");
+            entity.Property(e => e.TimeUp).HasColumnName("time_up");
+        });
+
         modelBuilder.Entity<Hocsinh>(entity =>
         {
             entity.ToTable("Hocsinh");
@@ -61,6 +102,53 @@ public partial class QLNHDbContext : DbContext
             entity.HasOne(d => d.Class).WithMany(p => p.Hocsinhs)
                 .HasForeignKey(d => d.Classid)
                 .HasConstraintName("FK_Hocsinh_Class");
+        });
+
+        modelBuilder.Entity<Nh>(entity =>
+        {
+            entity.ToTable("NH");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.MaNh)
+                .HasMaxLength(50)
+                .HasColumnName("MaNH");
+            entity.Property(e => e.TenNh)
+                .HasMaxLength(200)
+                .HasColumnName("TenNH");
+            entity.Property(e => e.TimeCre).HasColumnName("time_cre");
+            entity.Property(e => e.TimeUp).HasColumnName("time_up");
+        });
+
+        modelBuilder.Entity<Pcgvgd>(entity =>
+        {
+            entity.ToTable("PCGVGD");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.IdClass).HasColumnName("idClass");
+            entity.Property(e => e.IdGvgd).HasColumnName("idGVGD");
+            entity.Property(e => e.IdMh).HasColumnName("idMH");
+            entity.Property(e => e.IdNh).HasColumnName("idNH");
+            entity.Property(e => e.IdQt).HasColumnName("idQT");
+
+            entity.HasOne(d => d.IdClassNavigation).WithMany(p => p.Pcgvgds)
+                .HasForeignKey(d => d.IdClass)
+                .HasConstraintName("FK_PCGVGD_Class");
+
+            entity.HasOne(d => d.IdGvgdNavigation).WithMany(p => p.Pcgvgds)
+                .HasForeignKey(d => d.IdGvgd)
+                .HasConstraintName("FK_PCGVGD_GVGD");
+
+            entity.HasOne(d => d.IdMhNavigation).WithMany(p => p.Pcgvgds)
+                .HasForeignKey(d => d.IdMh)
+                .HasConstraintName("FK_PCGVGD_Subject");
+
+            entity.HasOne(d => d.IdNhNavigation).WithMany(p => p.Pcgvgds)
+                .HasForeignKey(d => d.IdNh)
+                .HasConstraintName("FK_PCGVGD_NH");
+
+            entity.HasOne(d => d.IdQtNavigation).WithMany(p => p.Pcgvgds)
+                .HasForeignKey(d => d.IdQt)
+                .HasConstraintName("FK_PCGVGD_Progress");
         });
 
         modelBuilder.Entity<PointStudent>(entity =>

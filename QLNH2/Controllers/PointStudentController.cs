@@ -71,57 +71,66 @@ namespace QLNH2.Controllers
         [Route("create-pointstudent")]
         public async Task<IActionResult> CreatePointStudent([FromBody] CreatePoint_Student point)
         {
-            var check_sv = await db.Hocsinhs.AnyAsync(x => x.Id == point.IdSv);
-            if (!check_sv)
-            {
-                return Ok(new { msg = "không có sinh này", success = false });
-            }
+            var check_id = await db.PointStudents.FirstOrDefaultAsync(x => x.Id == point.IdSv);
 
-            var check_sb = await db.Subjects.AnyAsync(x => x.Id == point.IdSv);
+
+            var check_sb = await db.Subjects.AnyAsync(x => x.Id == point.IdMh);
             if (!check_sb)
             {
                 return Ok(new { msg = "không có môn này", success = false });
             }
 
-            var check_qt = await db.Progresses.AnyAsync(x => x.Id == point.IdSv);
+            var check_qt = await db.Progresses.AnyAsync(x => x.Id == point.IdQt);
             if (!check_qt)
             {
                 return Ok(new { msg = "không có quá trình này", success = false });
             }
-
-            var check_dau = await db.PointStudents.AnyAsync(x => point.Point < 5 && (x.Evaluate.ToLower().Trim() == "khá" || point.Evaluate.ToLower().Trim() == "giỏi" || x.Evaluate.ToLower().Trim() == "trung bình"));
-            if (check_dau)
-            {
-                return Ok(new { msg = $"điểm dưới 5 là rớt, không thể {point.Evaluate}", success = false });
-            }
-
-            var check_trungbinh = await db.PointStudents.AnyAsync(x => (point.Point >= 5 && point.Point <= 6) && (point.Evaluate.ToLower().Trim() == "khá" || x.Evaluate.ToLower().Trim() == "giỏi"));
-            if (check_trungbinh)
-            {
-                return Ok(new { msg = "điểm từ 5 tới 6 chỉ có thể là Trung bình", success = false });
-            }
-
-            var check_kha = await db.PointStudents.AnyAsync(x => (point.Point >= 7 && point.Point <= 8) && (point.Evaluate.ToLower().Trim() == "trung bình" || x.Evaluate == "giỏi"));
-            if (check_kha)
-            {
-                return Ok(new { msg = "điểm từ 7 tới 8 chỉ có thể là Khá", success = false });
-            }
-
-            var check_gioi = await db.PointStudents.AnyAsync(x => (point.Point >= 9 && point.Point <= 10) && (point.Evaluate.ToLower().Trim() == "Khá" || x.Evaluate.ToLower().Trim() == "trung bình"));
-            if (check_gioi)
-            {
-                return Ok(new { msg = "điểm từ 9 tới 10 chỉ có thể là Giỏi", success = false });
-            }
-
             var newpoint = new PointStudent
             {
                 Point = point.Point,
-                Evaluate = point.Evaluate,
                 IdMh = point.IdMh,
                 IdSv = point.IdSv,
                 IdQt = point.IdQt
             };
             db.Add(newpoint);
+            var check_F = await db.PointStudents.AnyAsync(x => (point.Point >= 0 && point.Point <= 4.9));
+            if (check_F)
+            {
+                newpoint.Evaluate = "F";
+            }
+
+            var check_D = await db.PointStudents.AnyAsync(x => (point.Point >= 5 && point.Point <= 6.5));
+            if (check_D)
+            {
+                newpoint.Evaluate = "D";
+
+            }
+
+            var check_C = await db.PointStudents.AnyAsync(x => (point.Point >= 6.6 && point.Point <= 7));
+            if (check_C)
+            {
+                newpoint.Evaluate = "C";
+            }
+
+            var check_B = await db.PointStudents.AnyAsync(x => (point.Point >= 7.1 && point.Point <= 7.9));
+            if (check_B)
+            {
+                newpoint.Evaluate = "B";
+            }
+
+            var check_A = await db.PointStudents.AnyAsync(x => (point.Point >= 8 && point.Point <= 8.9));
+            if (check_A)
+            {
+                newpoint.Evaluate = "A";
+            }
+
+            var check_Aplus = await db.PointStudents.AnyAsync(x => (point.Point >= 9 && point.Point <= 10));
+            if (check_Aplus)
+            {
+                newpoint.Evaluate = "A+";
+            }
+
+            
             await db.SaveChangesAsync();
             return Ok(new { mmsg = "thêm thành công", success = true });
         }
@@ -159,40 +168,46 @@ namespace QLNH2.Controllers
                 return Ok(new { msg = "đánh giá chỉ có thể là F, D, C ,B ,A ,A+ thôi", success = false });
             }
 
-            var check_F = await db.PointStudents.AnyAsync(x => (point.Point >= 0 && point.Point <= 4.9) && (point.Evaluate.ToLower().Trim() == "D" || point.Evaluate.ToLower().Trim() == "C" || point.Evaluate.ToLower().Trim() == "B" || point.Evaluate.ToLower().Trim() == "A" || point.Evaluate.ToLower().Trim() == "A+"));
+            check_id.Point = point.Point;
+            check_id.IdSv = point.IdSv;
+            check_id.IdMh = point.IdMh;
+            check_id.IdQt = point.IdQt;
+
+            var check_F = await db.PointStudents.AnyAsync(x => (point.Point >= 0 && point.Point <= 4.9));
             if (check_F)
             {
-                return Ok(new { msg = $"điểm dưới 5 là rớt, không thể {point.Evaluate}", success = false });
+                check_id.Evaluate = "F";
             }
 
-            var check_D = await db.PointStudents.AnyAsync(x => (point.Point >= 5 && point.Point <= 6.5) && (point.Evaluate.ToLower().Trim() == "F" || x.Evaluate.ToLower().Trim() == "C" || x.Evaluate.ToLower().Trim() == "B" || x.Evaluate.ToLower().Trim() == "A" || x.Evaluate.ToLower().Trim() == "A+"));
+            var check_D = await db.PointStudents.AnyAsync(x => (point.Point >= 5 && point.Point <= 6.5) );
             if (check_D)
             {
-                return Ok(new { msg = "điểm từ 5 tới 6.5 chỉ có thể là D", success = false });
+                check_id.Evaluate = "D";
+
             }
 
-            var check_C = await db.PointStudents.AnyAsync(x => (point.Point >= 5 && point.Point <= 6.5) && (point.Evaluate.ToLower().Trim() == "F" || x.Evaluate.ToLower().Trim() == "D" || x.Evaluate.ToLower().Trim() == "B" || x.Evaluate.ToLower().Trim() == "A" || x.Evaluate.ToLower().Trim() == "A+"));
+            var check_C = await db.PointStudents.AnyAsync(x => (point.Point >= 6.6 && point.Point <= 7));
             if (check_C)
             {
-                return Ok(new { msg = "điểm từ 6.6 tới 7 chỉ có thể là C", success = false });
+                check_id.Evaluate = "C";
             }
 
-            var check_B = await db.PointStudents.AnyAsync(x => (point.Point >= 5 && point.Point <= 6.5) && (point.Evaluate.ToLower().Trim() == "F" || x.Evaluate.ToLower().Trim() == "C" || x.Evaluate.ToLower().Trim() == "D" || x.Evaluate.ToLower().Trim() == "A" || x.Evaluate.ToLower().Trim() == "A+"));
+            var check_B = await db.PointStudents.AnyAsync(x => (point.Point >= 7.1 && point.Point <= 7.9));
             if (check_B)
             {
-                return Ok(new { msg = "điểm từ 7.1 tới 7.9 chỉ có thể là B", success = false });
+                check_id.Evaluate = "B";
             }
 
-            var check_A = await db.PointStudents.AnyAsync(x => (point.Point >= 5 && point.Point <= 6.5) && (point.Evaluate.ToLower().Trim() == "F" || x.Evaluate.ToLower().Trim() == "C" || x.Evaluate.ToLower().Trim() == "B" || x.Evaluate.ToLower().Trim() == "D" || x.Evaluate.ToLower().Trim() == "A+"));
+            var check_A = await db.PointStudents.AnyAsync(x => (point.Point >= 8 && point.Point <= 8.9));
             if (check_A)
             {
-                return Ok(new { msg = "điểm từ 8 tới 8.9 chỉ có thể là A", success = false });
+                check_id.Evaluate = "A";
             }
 
-            var check_Aplus = await db.PointStudents.AnyAsync(x => (point.Point >= 5 && point.Point <= 6.5) && (point.Evaluate.ToLower().Trim() == "F" || x.Evaluate.ToLower().Trim() == "C" || x.Evaluate.ToLower().Trim() == "B" || x.Evaluate.ToLower().Trim() == "A" || x.Evaluate.ToLower().Trim() == "D"));
+            var check_Aplus = await db.PointStudents.AnyAsync(x => (point.Point >= 9 && point.Point <= 10));
             if (check_Aplus)
             {
-                return Ok(new { msg = "điểm từ 9 trở lên chỉ có thể là A+", success = false });
+                check_id.Evaluate = "A+";
             }
 
             var check_sv = await db.Hocsinhs.AnyAsync(x => x.Id == point.IdSv);
@@ -213,11 +228,7 @@ namespace QLNH2.Controllers
                 return Ok(new { msg = "không có quá trình đó", success = false });
             }
 
-            check_id.Point = point.Point;
-            check_id.Evaluate = point.Evaluate;
-            check_id.IdSv = point.IdSv;
-            check_id.IdMh = point.IdMh;
-            check_id.IdQt = point.IdQt;
+            
 
             await db.SaveChangesAsync();
             return Ok(new { msg = "cập nhật thành công", success = true });

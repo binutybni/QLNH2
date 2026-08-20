@@ -63,7 +63,7 @@ namespace QLNH2.Controllers
 
         }
 
-        [HttpPost]
+        [HttpPost]    // thêm Time-cre và Time-up
         [Route("create-subject")]
         public async Task<IActionResult> CreateProgress([FromBody] CreateSubject sb)
         {
@@ -83,6 +83,7 @@ namespace QLNH2.Controllers
             {
                 NameSub = sb.NameSub,
                 MaMh = sb.MaMh
+
             };
             await db.AddAsync(newqt);
             await db.SaveChangesAsync();

@@ -4,7 +4,6 @@
     {
         public double? Point { get; set; }
 
-        public string? Evaluate { get; set; }
 
         public int? IdSv { get; set; }
 

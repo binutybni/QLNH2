@@ -19,5 +19,7 @@ public partial class Hocsinh
 
     public virtual Class? Class { get; set; }
 
+    public virtual ICollection<Dkmh> Dkmhs { get; set; } = new List<Dkmh>();
+
     public virtual ICollection<PointStudent> PointStudents { get; set; } = new List<PointStudent>();
 }

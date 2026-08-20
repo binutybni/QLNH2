@@ -428,81 +428,81 @@ namespace QLNH2.Controllers
         // test
 
         //[HttpPost]
-        //[Route("bt1-buoi2")] 
-        //public async Task<IActionResult> GetAllStudentAndClassAndSchool(int idtrg, [FromBody] PaginationClass search)
-        //{
-        //    var query = db.Hocsinhs.Include(x => x.Class).AsQueryable(); // xài AsQueryable thì cần gõ trực tiếp giống như gõ code trên sql, và xài nhiều lần , và khái niệm(Inumberal, IQuerytable)
-        //    if (!string.IsNullOrEmpty(search.SearchTerm))
-        //    {
-        //        query = query.Where(x =>
-        //        x.NameStudent.ToLower().Trim().Contains(search.SearchTerm) ||
-        //        x.CodeStudent.ToLower().Trim().Contains(search.SearchTerm) ||
-        //        x.Class.NameClass.ToLower().Trim().Contains(search.SearchTerm));
-        //    }
+        //[Route("bt1-buoi2")]
+        // public async Task<IActionResult> GetAllStudentAndClassAndSchool(int idtrg, [FromBody] PaginationClass search)
+        // {
+        //     var query = db.Hocsinhs.Include(x => x.Class).AsQueryable(); // xài AsQueryable thì cần gõ trực tiếp giống như gõ code trên sql, và xài nhiều lần , và khái niệm(Inumberal, IQuerytable)
+        //     if (!string.IsNullOrEmpty(search.SearchTerm))
+        //     {
+        //         query = query.Where(x =>
+        //         x.NameStudent.ToLower().Trim().Contains(search.SearchTerm) ||
+        //         x.CodeStudent.ToLower().Trim().Contains(search.SearchTerm) ||
+        //         x.Class.NameClass.ToLower().Trim().Contains(search.SearchTerm));
+        //     }
 
-        //    if (query.Count() == 0)
-        //    {
-        //        return Ok(new { msg = "không tìm thấy dữ liệu bạn đang tìm", success = false });
-        //    }
+        //     if (query.Count() == 0)
+        //     {
+        //         return Ok(new { msg = "không tìm thấy dữ liệu bạn đang tìm", success = false });
+        //     }
 
-        //    var school = await db.Schools
-        //        .Where(x => x.Id == idtrg)
-        //        .Select(x => new
-        //        {
-        //            x.NameSchool
-        //        })
-        //        .FirstOrDefaultAsync();
-        //    if (school == null)
-        //    {
-        //        return Ok(new { msg = "không có id trường đó", success = false });
-        //    }
+        //     var school = await db.Schools
+        //         .Where(x => x.Id == idtrg)
+        //         .Select(x => new
+        //         {
+        //             x.NameSchool
+        //         })
+        //         .FirstOrDefaultAsync();
+        //     if (school == null)
+        //     {
+        //         return Ok(new { msg = "không có id trường đó", success = false });
+        //     }
 
-        //    var list = new List<object>();
+        //     var list = new List<object>();
 
-        //    var lop = await db.Classes
-        //        .Where(x => x.Schoolid == idtrg)
-        //        .Select(x => new
-        //        {
-        //            x.Id,
-        //            x.NameClass,
-        //        })
-        //        .ToListAsync();
+        //     var lop = await db.Classes
+        //         .Where(x => x.Schoolid == idtrg)
+        //         .Select(x => new
+        //         {
+        //             x.Id,
+        //             x.NameClass,
+        //         })
+        //         .ToListAsync();
 
-        //    var list2 = new List<object>();
+        //     var list2 = new List<object>();
 
-        //    var student = query
-        //    .Skip((search.Page - 1) * search.PageSize)
-        //    .Take(search.PageSize)
-        //    .Where(x => x.Classid =??)
-        //    .AsEnumerable()     // coi cái này là ranh giới, bình thường thì EF vẫn xứ lý trên IsQueryTable vì nó tự hiểu, nên sau khi dùng AsEnumerable thì nó chỉ xữ lý trên C# nên chỉ có thể dùng dữ liệu đã cung cấp thôi. Ví dụ lúc đầu db.Hocsinh thì về sau chỉ có thể lấy dữ liệu từ bảng học sinh nếu muôn lấy thêm dữ liệu của bảng khác thì phải Include(x => x.(bảng) trước đó) 
-        //    .Select((x, Index) => new
-        //    {
-        //        STT = (search.Page - 1) * search.PageSize + Index + 1,
-        //        x.NameStudent,
-        //        x.CodeStudent,
-        //    }).ToList();
+        //     var student = query
+        //     .Skip((search.Page - 1) * search.PageSize)
+        //     .Take(search.PageSize)
+        //     .Where(x => x.Classid == null)
+        //     .AsEnumerable()     // coi cái này là ranh giới, bình thường thì EF vẫn xứ lý trên IsQueryTable vì nó tự hiểu, nên sau khi dùng AsEnumerable thì nó chỉ xữ lý trên C# nên chỉ có thể dùng dữ liệu đã cung cấp thôi. Ví dụ lúc đầu db.Hocsinh thì về sau chỉ có thể lấy dữ liệu từ bảng học sinh nếu muôn lấy thêm dữ liệu của bảng khác thì phải Include(x => x.(bảng) trước đó) 
+        //     .Select((x, Index) => new
+        //     {
+        //         STT = (search.Page - 1) * search.PageSize + Index + 1,
+        //         x.NameStudent,
+        //         x.CodeStudent,
+        //     }).ToList();
 
-        //    list.Add(new
-        //    {
-        //        school.NameSchool,
-        //        lop
-        //    });
+        //     list.Add(new
+        //     {
+        //         school.NameSchool,
+        //         lop
+        //     });
 
-        //    list2.Add(new
-        //    {
-        //        list,
-        //        student
-        //    });
+        //     list2.Add(new
+        //     {
+        //         list,
+        //         student
+        //     });
 
-        //    var totalcount = query.Count();
-        //    return Ok(new
-        //    {
-        //        data = list2,
-        //        currentPage = search.Page,
-        //        totalcount = totalcount,
-        //        totalPage = (int)Math.Ceiling((double)totalcount / search.PageSize)
-        //    });
-        //}
+        //     var totalcount = query.Count();
+        //     return Ok(new
+        //     {
+        //         data = list2,
+        //         currentPage = search.Page,
+        //         totalcount = totalcount,
+        //         totalPage = (int)Math.Ceiling((double)totalcount / search.PageSize)
+        //     });
+        // }
 
         [HttpPost]
         [Route("bt1-buoi2")]
@@ -552,6 +552,7 @@ namespace QLNH2.Controllers
                         }).ToListAsync();
                     list2.Add(new
                     {
+                        item2.STT,
                         item2.NameClass,
                         sv
                     });
@@ -823,7 +824,7 @@ namespace QLNH2.Controllers
                     list2.Add(new
                     {
                         list3,
-                        PointAndEvaluate = point
+                        PointAndEvaluate = item2.Point
 
                     });
                 }
@@ -929,6 +930,205 @@ namespace QLNH2.Controllers
         // bài 1,2,3,4,5 làm sao để không dùng vòng lặp 
         // bài 3 với bài 4 hình như đang sai, cái point nó xuất hiện nhiều lần, chứ không phải 1 sinh viên thì 1 point rồi 1 sinh viên khác thì 1 point khác, làm sao để sữa
         // bài 5 hình như đang sai, api trả về là 1 môn học rồi lớp rồi sinh viên, rồi tiếp lớp đó rồi sinh viên khác, chứ không phải là 1 môn rồi 1 lớp rồi tất cả sinh viên của lớp đó, làm sao để sữa
+
+
+        //bài tập 1- buổi 2
+        [HttpPost]
+        [Route("bt1/buoi2")]
+        public async Task<IActionResult> Bt1Buoi2(int idtrg, [FromBody] PaginationClass search)
+        {
+
+
+
+            //var school = await db.Schools
+            //    .Where(x => x.Id == idtrg)
+            //    .Select(x => new
+            //    {
+            //        x.Id,
+            //        x.NameSchool,
+            //    }).ToListAsync();
+            //var list = new List<object>();
+            //foreach(var item in school)
+            //{
+            //    var lop = await db.Classes
+            //        .Where(x => x.Schoolid == item.Id)
+            //        .Select(x => new
+            //        {
+            //            x.Id,
+            //            x.NameClass
+            //        }).ToListAsync();
+            //    foreach(var item2 in lop)
+            //    {
+            //        var hs =  query
+            //            .Where(x => x.Classid == item2.Id)
+            //            .AsEnumerable()
+            //            .Select((x, index)=> new
+            //            {
+            //                STT = index +1,
+            //                item.NameSchool,
+            //                item2.NameClass,
+            //                x.NameStudent
+            //            }).ToList();
+            //        list.AddRange(hs);
+            //    }
+            //}
+
+            var query = db.Hocsinhs.AsQueryable();
+
+            if (!string.IsNullOrEmpty(search.SearchTerm))
+            {
+                query = query.Where(x =>
+                    x.NameStudent.ToLower().Trim().Contains(search.SearchTerm) ||
+                    x.CodeStudent.ToLower().Trim().Contains(search.SearchTerm));
+            }
+
+            var hs = query
+                .Select(x => new
+                {
+                    x.NameStudent,
+                    x.Class.School.NameSchool,
+                    x.Class.NameClass
+                })
+                .ToList()
+                .Select((x, index) => new
+                {
+                    STT = index + 1,
+                    x.NameStudent,
+                    x.NameSchool,
+                    x.NameClass
+                })
+                .ToList();
+
+            return Ok(new {data = hs });
+            
+        }
+
+        [HttpPost]
+        [Route("bt2/buoi2")]
+        public async Task<IActionResult> Bt2Buoi2()
+        {
+            var lop = await db.Classes
+                .Select(x => new
+                {
+                    x.Id,
+                    x.NameClass
+                    
+                }).ToListAsync();
+            var newlist = new List<object>();
+            foreach (var items in lop)
+            {
+                var Point = await db.PointStudents
+                    .Where(x => x.IdSvNavigation.Classid == items.Id)                   
+                    .Select(x => new
+                    {
+                        x.IdSvNavigation.NameStudent,
+                        x.IdSvNavigation.Class.NameClass,
+                        x.Point,
+                        x.Evaluate,
+                        x.IdMhNavigation.NameSub,
+                        x.IdQtNavigation.NameProgress,
+
+                    })
+                    .ToListAsync();
+                if (Point.Any())
+                {
+                    newlist.Add(new
+                    {
+                        items.NameClass,
+                        Point
+                    });
+                }
+                
+            }
+            return Ok(newlist);
+        }
+
+        [HttpPost]
+        [Route("bt3/buoi2")]
+        public async Task<IActionResult> Bt3Buoi2()
+        {
+            var sb = await db.Subjects
+                .Select( x => new
+                {
+                    x.Id,
+                    x.NameSub
+                }).ToListAsync();
+            var newlist = new List<object>();
+            foreach(var item in sb)
+            {
+                var point = await db.PointStudents
+                    .Where(x => x.IdMh == item.Id)
+                    .Select(x => new
+                    {
+                        Evaluate = x.Evaluate == "F" ? "Rớt" : "Đậu",
+                        x.IdSv,
+
+                    }).ToListAsync();
+                foreach(var item2 in point)
+                {
+                    var hs = await db.Hocsinhs
+                        .Where(x => x.Id == item2.IdSv)
+                        .Select(x => new
+                        {
+                            x.NameStudent
+
+                        }).ToListAsync();
+                    newlist.Add(new
+                    {
+                        item.NameSub,
+                        hs,
+                        item2.Evaluate
+                    });
+                }
+                
+            }
+            
+            return Ok(newlist);
+        }
+
+        [HttpPost]
+        [Route("bt4/buoi2")]
+        public async Task<IActionResult> Bt4Buoi2()
+        {
+            var lop = await db.Classes
+                .Select(x => new
+                {
+                    x.Id,
+                    x.NameClass
+                }).ToListAsync();
+            var newlist = new List<object>();
+            foreach(var item in lop)
+            {
+                var sb = db.PointStudents
+                    .Where(x => x.IdSvNavigation.Classid == item.Id) // giống như ghép 2 bảng lại để lọc, khái niệm JOIN (SQL)
+                    .Select(x => new
+                    {
+                        Id = x.IdMh,
+                        name = x.IdMhNavigation.NameSub
+                    })
+                    .Distinct()
+                    .OrderBy(x => x.Id)
+                    .ToList();
+                foreach (var ss in sb)
+                {
+                    var sb2 = await db.PointStudents
+                    .Where(x => x.IdMh == ss.Id)
+                    .Select(x => new
+                    {
+                        x.IdSvNavigation.NameStudent
+                    })
+                    .ToListAsync();
+                    newlist.Add(new
+                    {
+                        item.NameClass,
+                        ss.name,
+                        sb2
+                    });
+                }
+            }
+
+            return Ok(newlist);
+        }
 
     }
 }

@@ -15,5 +15,7 @@ public partial class Subject
 
     public int? TimeUp { get; set; }
 
+    public virtual ICollection<Pcgvgd> Pcgvgds { get; set; } = new List<Pcgvgd>();
+
     public virtual ICollection<PointStudent> PointStudents { get; set; } = new List<PointStudent>();
 }
